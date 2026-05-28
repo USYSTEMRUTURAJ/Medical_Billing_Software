@@ -12,7 +12,7 @@ const POS = () => {
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('Cash');
-  const [discount, setDiscount] = useState(0);
+  const [discountPercent, setDiscountPercent] = useState(0);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [completedSale, setCompletedSale] = useState(null);
   const searchInputRef = useRef(null);
@@ -79,7 +79,8 @@ const POS = () => {
 
   const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const gstTotal = cart.reduce((sum, item) => sum + ((item.price * item.gstPercentage / 100) * item.quantity), 0);
-  const total = subtotal + gstTotal - discount;
+  const discountAmount = (subtotal + gstTotal) * (discountPercent / 100);
+  const total = subtotal + gstTotal - discountAmount;
 
   const handleCheckout = async () => {
     if (cart.length === 0) {
@@ -100,7 +101,7 @@ const POS = () => {
           gstPercentage: item.gstPercentage
         })),
         paymentMethod,
-        discount
+        discount: discountAmount
       });
 
       toast.success('Sale completed successfully!');
@@ -109,7 +110,7 @@ const POS = () => {
       setCart([]);
       setCustomerName('');
       setCustomerPhone('');
-      setDiscount(0);
+      setDiscountPercent(0);
       setSearchTerm('');
       fetchMedicines('');
 
@@ -266,15 +267,21 @@ const POS = () => {
             </div>
             <div className="flex justify-between items-center">
               <span>Discount</span>
-              <div className="flex items-center">
-                <span className="mr-1">₹</span>
-                <input 
-                  type="number" 
-                  value={discount}
-                  onChange={(e) => setDiscount(Number(e.target.value))}
-                  className="w-16 px-2 py-1 text-right border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary-500 bg-gray-50"
-                  min="0"
-                />
+              <div className="flex items-center gap-2">
+                <div className="flex items-center">
+                  <input 
+                    type="number" 
+                    value={discountPercent}
+                    onChange={(e) => setDiscountPercent(Number(e.target.value))}
+                    className="w-16 px-2 py-1 text-right border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary-500 bg-gray-50"
+                    min="0"
+                    max="100"
+                  />
+                  <span className="ml-1">%</span>
+                </div>
+                {discountPercent > 0 && (
+                  <span className="text-xs text-red-500 font-medium">(-₹{discountAmount.toFixed(2)})</span>
+                )}
               </div>
             </div>
           </div>
