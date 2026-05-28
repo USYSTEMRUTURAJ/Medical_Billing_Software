@@ -10,6 +10,7 @@ import POS from './pages/POS';
 import Customers from './pages/Customers';
 import Suppliers from './pages/Suppliers';
 import Settings from './pages/Settings';
+import Staff from './pages/Staff';
 
 const ProtectedRoute = ({ children }) => {
   const userInfo = useAuthStore((state) => state.userInfo);
@@ -40,6 +41,7 @@ function App() {
           <Route path="customers" element={<Customers />} />
           <Route path="suppliers" element={<Suppliers />} />
           <Route path="settings" element={<Settings />} />
+          <Route path="staff" element={<Staff />} />
         </Route>
       </Routes>
     </Router>

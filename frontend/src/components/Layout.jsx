@@ -1,5 +1,5 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, ShoppingCart, Package, Users, Truck, LogOut, Settings } from 'lucide-react';
+import { LayoutDashboard, ShoppingCart, Package, Users, Truck, LogOut, Settings, UserCog } from 'lucide-react';
 import useAuthStore from '../store/authStore';
 
 const Layout = () => {
@@ -17,6 +17,7 @@ const Layout = () => {
     { name: 'Inventory', icon: Package, path: '/inventory' },
     { name: 'Customers', icon: Users, path: '/customers' },
     { name: 'Suppliers', icon: Truck, path: '/suppliers' },
+    ...(userInfo?.role === 'Admin' ? [{ name: 'Staff Management', icon: UserCog, path: '/staff' }] : []),
     { name: 'Settings', icon: Settings, path: '/settings' },
   ];
 

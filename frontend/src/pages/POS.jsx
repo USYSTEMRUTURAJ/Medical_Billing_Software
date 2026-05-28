@@ -9,7 +9,7 @@ const POS = () => {
   const { medicines, fetchMedicines, isLoading } = useMedicineStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [cart, setCart] = useState([]);
-  const [customerName, setCustomerName] = useState('Walk-in Customer');
+  const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('Cash');
   const [discount, setDiscount] = useState(0);
@@ -90,7 +90,7 @@ const POS = () => {
     setIsCheckingOut(true);
     try {
       const { data } = await api.post('/sales', {
-        customerName,
+        customerName: customerName.trim() || 'Walk-in Customer',
         customerPhone,
         saleItems: cart.map(item => ({
           medicine: item.medicine,
@@ -107,7 +107,7 @@ const POS = () => {
       
       setCompletedSale(data);
       setCart([]);
-      setCustomerName('Walk-in Customer');
+      setCustomerName('');
       setCustomerPhone('');
       setDiscount(0);
       setSearchTerm('');

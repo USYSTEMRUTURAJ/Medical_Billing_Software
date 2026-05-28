@@ -9,6 +9,9 @@ import authRoutes from './routes/authRoutes.js';
 import medicineRoutes from './routes/medicineRoutes.js';
 import saleRoutes from './routes/saleRoutes.js';
 import dashboardRoutes from './routes/dashboardRoutes.js';
+import customerRoutes from './routes/customerRoutes.js';
+import supplierRoutes from './routes/supplierRoutes.js';
+import settingRoutes from './routes/settingRoutes.js';
 
 dotenv.config();
 
@@ -31,6 +34,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/medicines', medicineRoutes);
 app.use('/api/sales', saleRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/customers', customerRoutes);
+app.use('/api/suppliers', supplierRoutes);
+app.use('/api/settings', settingRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

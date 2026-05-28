@@ -80,4 +80,70 @@ const getUserProfile = asyncHandler(async (req, res) => {
   }
 });
 
-export { authUser, registerUser, getUserProfile };
+// @desc    Get all users
+// @route   GET /api/auth/users
+// @access  Private/Admin
+const getUsers = asyncHandler(async (req, res) => {
+  const users = await User.find({}).select('-password').sort({ createdAt: -1 });
+  res.json(users);
+});
+
+// @desc    Update user
+// @route   PUT /api/auth/users/:id
+// @access  Private/Admin
+const updateUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
+
+  if (user) {
+    if (req.body.email && req.body.email !== user.email) {
+      const emailExists = await User.findOne({ email: req.body.email });
+      if (emailExists) {
+        res.status(400);
+        throw new Error('Email is already registered by another user');
+      }
+    }
+
+    user.name = req.body.name || user.name;
+    user.email = req.body.email || user.email;
+    user.role = req.body.role || user.role;
+    user.isActive = req.body.isActive !== undefined ? req.body.isActive : user.isActive;
+
+    if (req.body.password) {
+      user.password = req.body.password;
+    }
+
+    const updatedUser = await user.save();
+    res.json({
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      role: updatedUser.role,
+      isActive: updatedUser.isActive,
+    });
+  } else {
+    res.status(404);
+    throw new Error('User not found');
+  }
+});
+
+// @desc    Delete user
+// @route   DELETE /api/auth/users/:id
+// @access  Private/Admin
+const deleteUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
+
+  if (user) {
+    // Prevent admin from deleting themselves
+    if (user._id.toString() === req.user._id.toString()) {
+      res.status(400);
+      throw new Error('You cannot delete your own admin account');
+    }
+    await user.deleteOne();
+    res.json({ message: 'User removed successfully' });
+  } else {
+    res.status(404);
+    throw new Error('User not found');
+  }
+});
+
+export { authUser, registerUser, getUserProfile, getUsers, updateUser, deleteUser };
